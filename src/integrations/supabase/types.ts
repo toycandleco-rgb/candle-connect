@@ -14,7 +14,193 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      candle_customers: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          offers_opt_in: boolean
+          owner_id: string
+          phone: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          offers_opt_in?: boolean
+          owner_id: string
+          phone: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          offers_opt_in?: boolean
+          owner_id?: string
+          phone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      candle_products: {
+        Row: {
+          active: boolean
+          cost_price: number
+          created_at: string
+          id: string
+          name: string
+          owner_id: string
+          sale_price: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          cost_price: number
+          created_at?: string
+          id?: string
+          name: string
+          owner_id: string
+          sale_price: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          cost_price?: number
+          created_at?: string
+          id?: string
+          name?: string
+          owner_id?: string
+          sale_price?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      candle_sale_expenses: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string
+          id: string
+          owner_id: string
+          sale_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description: string
+          id?: string
+          owner_id: string
+          sale_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string
+          id?: string
+          owner_id?: string
+          sale_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candle_sale_expenses_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "candle_sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      candle_sale_items: {
+        Row: {
+          cost_price: number
+          created_at: string
+          id: string
+          owner_id: string
+          product_id: string | null
+          product_name: string
+          quantity: number
+          sale_id: string
+          sale_price: number
+        }
+        Insert: {
+          cost_price: number
+          created_at?: string
+          id?: string
+          owner_id: string
+          product_id?: string | null
+          product_name: string
+          quantity: number
+          sale_id: string
+          sale_price: number
+        }
+        Update: {
+          cost_price?: number
+          created_at?: string
+          id?: string
+          owner_id?: string
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          sale_id?: string
+          sale_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candle_sale_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "candle_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candle_sale_items_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "candle_sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      candle_sales: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          customer_name: string
+          customer_phone: string
+          id: string
+          owner_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          customer_name: string
+          customer_phone: string
+          id?: string
+          owner_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          customer_name?: string
+          customer_phone?: string
+          id?: string
+          owner_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candle_sales_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "candle_customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
