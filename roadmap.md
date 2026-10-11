@@ -1,0 +1,5 @@
+- [ ] Confirm owner profile-data needs before adding sign-in.
+- [ ] Set up owner-only access and persistent Cloud tables for products, customers, sales, line items, and expenses.
+- [ ] Build mobile-first product management, billing, sales/profit summary, and customer list.
+- [ ] Compose plain WhatsApp bill and customer offer messages for manual review/send.
+- [ ] Verify the app build and the main sale-entry experience; review task list before completion.
