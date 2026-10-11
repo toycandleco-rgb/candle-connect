@@ -1,19 +1,22 @@
-# Candle Expo Billing & Customer Book
+# Candle Expo Sales & Billing
 
-Build a mobile-first, owner-only billing app for the candle expo.
+Build a phone-friendly tool for managing candle products and recording expo sales.
 
 ## What it will do
-- Create a quick bill by entering candle names, prices, and quantities; calculate the total in INR (₹).
-- Enter or select a customer by name and WhatsApp number, save their contact in the customer book, and open WhatsApp with a simple text-only bill ready to send.
-- Find saved customers later and prepare a personal offer message for a customer who has opted in. The owner reviews and sends each message in WhatsApp; the app will not send messages automatically or create a PDF/fancy invoice.
-- Keep customer details and completed bills in the database so they remain available after the expo.
+- Maintain a product list with each candle's name, cost price, and sale price in INR (₹).
+- Start a sale, select a customer or add their name and WhatsApp number, add one or more products with quantities, and record sale-related expenses.
+- Calculate the bill total, product cost, expenses, and profit for each sale; show overall sales, expenses, and profit totals.
+- Save completed sales and customer contacts in Lovable Cloud. Preserve each sale's original product prices and costs so later product price edits do not change past profit reports.
+- Prepare a simple text-only bill in WhatsApp for the owner to review and send.
+- Search the saved customer list and prepare individual offer messages in WhatsApp; sending remains a manual action in WhatsApp.
 
 ## Experience
-- Put billing first, with large touch-friendly controls and a clear total/send action suited to a phone at a busy stall.
-- Include a customer-book view for searching contacts and starting an individual offer message.
-- Use a straightforward owner sign-in so customer phone numbers are not exposed publicly.
+- Make the sale-entry screen the first view, with large touch-friendly controls and a clear running total.
+- Provide clear product-management, sales-summary, and customer-list views without cluttering the quick billing flow.
+- Require owner sign-in so customer contact details and business records stay private.
 
 ## Technical details
-- Use Lovable Cloud for persistent customer and bill records, with access restricted to the signed-in owner.
-- Use a WhatsApp click-to-chat link with properly encoded plain text; sending happens in WhatsApp after the owner reviews it.
-- Add route-specific page metadata and validate bill/customer inputs before saving or composing messages.
+- Use Lovable Cloud for persistent products, customers, sales, sale items, and sale expenses, with access restricted to the signed-in owner.
+- Calculate profit as sale revenue minus the recorded cost of products sold and sale expenses.
+- Compose WhatsApp click-to-chat links with validated phone numbers and URL-encoded plain text; do not send messages automatically or create PDF invoices.
+- Add page-specific metadata and validate product, customer, sale, and expense inputs before saving.
