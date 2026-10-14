@@ -1,0 +1,8 @@
+DROP POLICY "Owners manage their candle sales" ON public.candle_sales;
+CREATE POLICY "Owners manage their candle sales" ON public.candle_sales FOR ALL TO authenticated USING ((select auth.uid()) = owner_id) WITH CHECK ((select auth.uid()) = owner_id AND (customer_id IS NULL OR EXISTS (SELECT 1 FROM public.candle_customers customer WHERE customer.id = customer_id AND customer.owner_id = (select auth.uid()))));
+
+DROP POLICY "Owners manage their candle sale items" ON public.candle_sale_items;
+CREATE POLICY "Owners manage their candle sale items" ON public.candle_sale_items FOR ALL TO authenticated USING ((select auth.uid()) = owner_id AND EXISTS (SELECT 1 FROM public.candle_sales sale WHERE sale.id = sale_id AND sale.owner_id = (select auth.uid()))) WITH CHECK ((select auth.uid()) = owner_id AND EXISTS (SELECT 1 FROM public.candle_sales sale WHERE sale.id = sale_id AND sale.owner_id = (select auth.uid())) AND (product_id IS NULL OR EXISTS (SELECT 1 FROM public.candle_products product WHERE product.id = product_id AND product.owner_id = (select auth.uid()))));
+
+DROP POLICY "Owners manage their candle sale expenses" ON public.candle_sale_expenses;
+CREATE POLICY "Owners manage their candle sale expenses" ON public.candle_sale_expenses FOR ALL TO authenticated USING ((select auth.uid()) = owner_id AND EXISTS (SELECT 1 FROM public.candle_sales sale WHERE sale.id = sale_id AND sale.owner_id = (select auth.uid()))) WITH CHECK ((select auth.uid()) = owner_id AND EXISTS (SELECT 1 FROM public.candle_sales sale WHERE sale.id = sale_id AND sale.owner_id = (select auth.uid())));

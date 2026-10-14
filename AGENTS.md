@@ -8,3 +8,7 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Application Structure
+- Keep the candle expo workflow on the root page with view switching local to that page; this keeps the counter flow quick and avoids unnecessary navigation during sales.
+- Keep sale calculations and WhatsApp message composition in a browser-safe shared business-logic module; this allows the same rules to be used by the interface and focused tests.

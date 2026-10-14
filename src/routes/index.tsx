@@ -7,7 +7,6 @@ import {
   ChartNoAxesCombined,
   Check,
   ChevronDown,
-  ChevronLeft,
   ChevronRight,
   CirclePlus,
   Flame,
@@ -111,11 +110,6 @@ function App() {
     return product ? [{ name: product.name, quantity: line.quantity, salePrice: Number(product.sale_price), costPrice: Number(product.cost_price) }] : [];
   }), [draftLines, products]);
   const draftTotals = calculateSale(draftCart, draftExpenses);
-  const soldItemTotals = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const item of items) map.set(item.product_name, (map.get(item.product_name) ?? 0) + item.quantity);
-    return map;
-  }, [items]);
   const totals = useMemo(() => sales.reduce((acc, sale) => {
     const saleItems = items.filter((item) => item.sale_id === sale.id);
     const saleExpenses = expenses.filter((item) => item.sale_id === sale.id);

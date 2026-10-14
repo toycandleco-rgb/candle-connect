@@ -206,6 +206,10 @@ button { color: inherit; }
 .metric-card > p { margin: 6px 0 0; color: var(--muted-foreground); font-size: 10px; }
 .table-panel, .catalog-panel, .customer-book { padding: 20px; }
 .list-heading, .customer-book-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 17px; }
+.list-actions { display: flex; align-items: center; gap: 12px; }
+.list-search { display: flex; align-items: center; gap: 7px; width: 172px; height: 32px; padding-left: 9px; border: 1px solid var(--input); border-radius: 5px; color: var(--muted-foreground); }
+.list-search .input { height: 29px; min-width: 0; padding: 0 7px 0 0; border: 0; box-shadow: none; font-size: 10px; }
+.list-search .input:focus-visible { outline: none; box-shadow: none; }
 .record-count { flex: none; font-size: 8px; letter-spacing: 0.08em; }
 .sales-list { display: grid; }
 .sale-record { display: grid; grid-template-columns: minmax(160px, 1fr) minmax(130px, 1.3fr) 95px 90px 34px; gap: 16px; min-height: 68px; border-top: 1px solid var(--border); }
@@ -240,6 +244,11 @@ button { color: inherit; }
 .unit-margin { display: grid; gap: 3px; justify-items: end; color: var(--profit); font-size: 10px; font-weight: 650; white-space: nowrap; }
 .unit-margin small { font-size: 7px; }
 .catalog-item .button { height: 28px; padding: 0 9px; font-size: 9px; }
+.product-edit-form { display: grid; grid-template-columns: minmax(130px, 1.4fr) minmax(95px, 0.8fr) minmax(95px, 0.8fr) auto; align-items: end; gap: 8px; padding: 10px 0 12px 40px; border-top: 1px dashed var(--border); }
+.product-edit-form label { display: grid; gap: 5px; color: var(--muted-foreground); font-size: 9px; }
+.product-edit-form .input { height: 32px; min-width: 0; font-size: 10px; }
+.product-edit-form .money-input { height: 32px; }
+.product-edit-form .button { height: 32px; padding: 0 9px; font-size: 9px; }
 .catalog-inactive { opacity: 0.55; }
 .customer-book-top { margin-bottom: 16px; }
 .offer-label { display: grid; gap: 7px; margin-bottom: 18px; color: var(--foreground); font-size: 11px; font-weight: 590; }
@@ -376,6 +385,9 @@ button { color: inherit; }
   .metric-card > strong { margin-top: 12px; font-size: 17px; }
   .metric-card > p { font-size: 9px; line-height: 1.4; }
   .table-panel, .catalog-panel, .customer-book { padding: 14px; }
+  .list-actions { gap: 8px; }
+  .list-search { width: 130px; height: 29px; }
+  .list-search .input { height: 26px; font-size: 9px; }
   .sale-record { grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; padding: 10px 0; }
   .sale-record-main { grid-column: 1; }
   .sale-record-products { grid-column: 1 / -1; grid-row: 2; padding-left: 40px; }
@@ -396,6 +408,9 @@ button { color: inherit; }
   .permission-pill { grid-column: 2; grid-row: 1; justify-self: end; font-size: 8px; }
   .customer-row > .button, .offer-disabled { grid-column: 2; grid-row: 2; justify-self: end; }
   .customer-row > .button { height: 27px; }
+  .product-edit-form { grid-template-columns: 1fr 1fr; padding-left: 0; }
+  .product-edit-form label:first-child { grid-column: 1 / -1; }
+  .product-edit-form > .button { justify-self: start; }
   .page-footer { min-height: 48px; font-size: 7px; }
   .mobile-nav { position: fixed; z-index: 20; right: 0; bottom: 0; left: 0; display: grid; grid-template-columns: repeat(4, 1fr); min-height: calc(64px + env(safe-area-inset-bottom)); padding: 5px 7px calc(5px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: var(--card); box-shadow: 0 -4px 16px oklch(0.25 0.04 255 / 4%); }
   .mobile-nav > button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 0; border-radius: 6px; color: var(--muted-foreground); background: transparent; font-size: 9px; cursor: pointer; }
