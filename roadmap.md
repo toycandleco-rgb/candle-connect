@@ -1,5 +1,6 @@
-- [ ] Confirm owner profile-data needs before adding sign-in.
-- [ ] Set up owner-only access and persistent Cloud tables for products, customers, sales, line items, and expenses.
-- [ ] Build mobile-first product management, billing, sales/profit summary, and customer list.
-- [ ] Compose plain WhatsApp bill and customer offer messages for manual review/send.
-- [ ] Verify the app build and the main sale-entry experience; review task list before completion.
+- [x] Keep owner setup limited to sign-in; no extra profile details are needed.
+- [x] Set up owner-only access and persistent Cloud tables for products, customers, sales, line items, and expenses.
+- [x] Build mobile-first product management, billing, sales/profit summary, and customer list.
+- [x] Compose plain WhatsApp bill and customer offer messages for manual review/send.
+- [x] Verify business calculations, app routing, and sign-in layout at phone and desktop widths.
+- [ ] Verify saving a sale and opening its WhatsApp bill after an owner account exists; the Cloud account list is currently empty.
