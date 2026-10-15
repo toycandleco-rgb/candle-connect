@@ -385,8 +385,10 @@ button { color: inherit; }
   .metric-card > strong { margin-top: 12px; font-size: 17px; }
   .metric-card > p { font-size: 9px; line-height: 1.4; }
   .table-panel, .catalog-panel, .customer-book { padding: 14px; }
+  .list-heading, .customer-book-top { align-items: flex-start; flex-direction: column; }
   .list-actions { gap: 8px; }
-  .list-search { width: 130px; height: 29px; }
+  .list-actions { width: 100%; justify-content: space-between; }
+  .list-search { width: 130px; max-width: 190px; height: 29px; flex: 1; }
   .list-search .input { height: 26px; font-size: 9px; }
   .sale-record { grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; padding: 10px 0; }
   .sale-record-main { grid-column: 1; }
