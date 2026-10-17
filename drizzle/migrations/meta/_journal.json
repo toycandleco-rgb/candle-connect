@@ -15,6 +15,13 @@
       "when": 1791955245632,
       "tag": "0001_secure_candle_sale_child_ownership",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792220457662,
+      "tag": "0002_add_expo_tracking",
+      "breakpoints": true
     }
   ]
 }
