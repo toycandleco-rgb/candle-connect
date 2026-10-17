@@ -79,10 +79,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Wick & Wax | Candle Sales" },
-      { name: "description", content: "Quick candle billing, customer contacts, sales and profit tracking for your expo." },
+      {
+        name: "description",
+        content:
+          "Quick candle billing, customer contacts, sales and profit tracking for your expo.",
+      },
       { name: "author", content: "Lovable" },
       { property: "og:title", content: "Wick & Wax | Candle Sales" },
-      { property: "og:description", content: "Quick candle billing, customer contacts, sales and profit tracking for your expo." },
+      {
+        property: "og:description",
+        content:
+          "Quick candle billing, customer contacts, sales and profit tracking for your expo.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
