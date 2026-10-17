@@ -34,36 +34,38 @@
 :root {
   --radius: 0.5rem;
   color-scheme: dark;
-  --background: oklch(0.21 0.035 257);
-  --foreground: oklch(0.96 0.009 255);
-  --card: oklch(0.25 0.035 257);
-  --card-foreground: oklch(0.96 0.009 255);
-  --popover: oklch(0.28 0.035 257);
-  --popover-foreground: oklch(0.96 0.009 255);
-  --primary: oklch(0.68 0.16 255);
-  --primary-foreground: oklch(0.16 0.025 257);
-  --secondary: oklch(0.31 0.035 257);
-  --secondary-foreground: oklch(0.91 0.012 255);
-  --muted: oklch(0.28 0.035 257);
-  --muted-foreground: oklch(0.72 0.022 255);
-  --accent: oklch(0.36 0.055 255);
-  --accent-foreground: oklch(0.93 0.018 255);
-  --destructive: oklch(0.68 0.17 28);
-  --destructive-foreground: oklch(0.18 0.03 28);
-  --border: oklch(0.37 0.035 257);
-  --input: oklch(0.39 0.035 257);
-  --ring: oklch(0.68 0.16 255);
-  --wax: oklch(0.28 0.035 257);
-  --wax-deep: oklch(0.33 0.04 257);
-  --leaf: oklch(0.71 0.13 160);
-  --leaf-soft: oklch(0.34 0.07 160);
-  --honey: oklch(0.79 0.14 78);
-  --honey-soft: oklch(0.36 0.07 82);
-  --coral: oklch(0.74 0.13 37);
-  --coral-soft: oklch(0.35 0.065 37);
-  --profit: oklch(0.72 0.13 151);
-  --profit-soft: oklch(0.33 0.07 154);
-  --candle-wax: oklch(0.86 0.02 82);
+  --background: #0F172A;
+  --foreground: #F8FAFC;
+  --card: #1E293B;
+  --card-foreground: #F8FAFC;
+  --popover: #1E293B;
+  --popover-foreground: #F8FAFC;
+  --primary: #3B82F6;
+  --primary-foreground: #FFFFFF;
+  --secondary: #26354A;
+  --secondary-foreground: #E2E8F0;
+  --muted: #26354A;
+  --muted-foreground: #A5B4C8;
+  --accent: #334155;
+  --accent-foreground: #F1F5F9;
+  --destructive: #F87171;
+  --destructive-foreground: #1F2937;
+  --border: #334155;
+  --input: #475569;
+  --ring: #3B82F6;
+  --wax: #26354A;
+  --wax-deep: #334155;
+  --leaf: #75D6A4;
+  --leaf-soft: #23483C;
+  --honey: #F4C56B;
+  --honey-soft: #51412A;
+  --coral: #F08C78;
+  --coral-soft: #50352F;
+  --profit: #75D6A4;
+  --profit-soft: #23483C;
+  --candle-wax: #E8DCC5;
+  --candle-highlight: #FFF8EC;
+  --candle-shade: #D5C4A7;
   --panel-shadow: 0 16px 42px oklch(0.09 0.025 257 / 28%);
   --nav-shadow: 0 -4px 16px oklch(0.09 0.025 257 / 24%);
 }
@@ -285,7 +287,7 @@ button { color: inherit; }
 .auth-layout { position: relative; display: grid; width: min(1080px, 87vw); flex: 1; grid-template-columns: 1.1fr 0.9fr; align-items: center; gap: 6vw; margin: 0 auto; padding: 20px 0 45px; }
 .auth-story { position: relative; min-height: 520px; padding-top: 58px; }
 .auth-story .eyebrow { font-size: 10px; }
-.auth-story h1 { position: relative; z-index: 2; margin: 24px 0 15px; font-size: clamp(42px, 5vw, 61px); font-weight: 740; line-height: 1.06; letter-spacing: 0; }
+.auth-story h1 { position: relative; z-index: 2; margin: 24px 0 15px; font-size: 56px; font-weight: 740; line-height: 1.06; letter-spacing: 0; }
 .auth-story h1 span { color: var(--leaf); }
 .auth-story > p { position: relative; z-index: 2; max-width: 390px; margin: 0; color: var(--muted-foreground); font-size: 14px; line-height: 1.75; }
 .story-stats { position: relative; z-index: 2; display: flex; align-items: center; gap: 14px; margin-top: 27px; }
@@ -295,7 +297,7 @@ button { color: inherit; }
 .story-stats > i { width: 1px; height: 18px; background: var(--border); }
 .flame-art { position: absolute; right: 11px; bottom: -14px; width: 229px; height: 229px; }
 .flame-glow { position: absolute; bottom: 3px; left: 0; width: 229px; height: 135px; border-radius: 50%; background: var(--honey-soft); filter: blur(34px); }
-.candle-body { position: absolute; bottom: -1px; left: 54px; width: 122px; height: 82px; border: 1px solid var(--border); border-radius: 4px 4px 11px 11px; background: linear-gradient(90deg, var(--candle-wax), oklch(0.97 0.009 90) 28%, var(--candle-wax) 85%, oklch(0.81 0.03 81)); box-shadow: var(--panel-shadow); }
+.candle-body { position: absolute; bottom: -1px; left: 54px; width: 122px; height: 82px; border: 1px solid var(--border); border-radius: 4px 4px 11px 11px; background: linear-gradient(90deg, var(--candle-wax), var(--candle-highlight) 28%, var(--candle-wax) 85%, var(--candle-shade)); box-shadow: var(--panel-shadow); }
 .candle-body::after { position: absolute; right: 10px; bottom: 12px; left: 10px; height: 19px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); content: ""; }
 .flame-outer { position: absolute; z-index: 2; bottom: 69px; left: 95px; width: 42px; height: 86px; overflow: hidden; border: 1px solid var(--honey); border-radius: 68% 32% 51% 49% / 62% 55% 45% 38%; background: linear-gradient(165deg, var(--honey), var(--coral) 80%); box-shadow: 0 0 38px var(--honey-soft); transform: rotate(2deg); }
 .flame-inner { position: absolute; bottom: -2px; left: 13px; width: 15px; height: 44px; border-radius: 55% 45% 35% 35%; background: linear-gradient(180deg, oklch(0.99 0.018 88), var(--honey-soft)); }

@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { calculateSale, makeBillMessage, makeWhatsAppUrl, normalizePhone } from "@/lib/candle-business";
+import {
+  calculateSale,
+  makeBillMessage,
+  makeWhatsAppUrl,
+  normalizePhone,
+} from "@/lib/candle-business";
 
 describe("candle sale totals", () => {
   it("calculates profit as sales less product cost and recorded expenses", () => {
