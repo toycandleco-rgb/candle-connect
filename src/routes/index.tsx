@@ -295,14 +295,12 @@ function App() {
     }
     setBusy(true);
     setError("");
-    const { error: insertError } = await supabase
-      .from("candle_products")
-      .insert({
-        owner_id: session.id,
-        name: productName.trim(),
-        cost_price: cost,
-        sale_price: price,
-      });
+    const { error: insertError } = await supabase.from("candle_products").insert({
+      owner_id: session.id,
+      name: productName.trim(),
+      cost_price: cost,
+      sale_price: price,
+    });
     if (insertError) setError(insertError.message);
     else {
       setProductName("");
@@ -475,16 +473,14 @@ function App() {
     });
     const itemResult = await supabase.from("candle_sale_items").insert(lineRows);
     const expenseResult = draftExpenses.length
-      ? await supabase
-          .from("candle_sale_expenses")
-          .insert(
-            draftExpenses.map((expense) => ({
-              owner_id: session.id,
-              sale_id: sale.id,
-              description: expense.description,
-              amount: expense.amount,
-            })),
-          )
+      ? await supabase.from("candle_sale_expenses").insert(
+          draftExpenses.map((expense) => ({
+            owner_id: session.id,
+            sale_id: sale.id,
+            description: expense.description,
+            amount: expense.amount,
+          })),
+        )
       : { error: null };
     if (itemResult.error || expenseResult.error) {
       await supabase.from("candle_sales").delete().eq("id", sale.id);
