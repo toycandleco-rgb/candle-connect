@@ -44,6 +44,27 @@ export type Database = {
         }
         Relationships: []
       }
+      candle_expos: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          owner_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          owner_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          owner_id?: string
+        }
+        Relationships: []
+      }
       candle_products: {
         Row: {
           active: boolean
@@ -169,6 +190,7 @@ export type Database = {
           customer_id: string | null
           customer_name: string
           customer_phone: string
+          expo_id: string | null
           id: string
           owner_id: string
           status: string
@@ -178,6 +200,7 @@ export type Database = {
           customer_id?: string | null
           customer_name: string
           customer_phone: string
+          expo_id?: string | null
           id?: string
           owner_id: string
           status?: string
@@ -187,6 +210,7 @@ export type Database = {
           customer_id?: string | null
           customer_name?: string
           customer_phone?: string
+          expo_id?: string | null
           id?: string
           owner_id?: string
           status?: string
@@ -197,6 +221,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "candle_customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candle_sales_expo_id_fkey"
+            columns: ["expo_id"]
+            isOneToOne: false
+            referencedRelation: "candle_expos"
             referencedColumns: ["id"]
           },
         ]
