@@ -3,4 +3,5 @@
 - [x] Build mobile-first product management, billing, sales/profit summary, and customer list.
 - [x] Compose plain WhatsApp bill and customer offer messages for manual review/send.
 - [x] Verify business calculations, app routing, and sign-in layout at phone and desktop widths.
+- [ ] Add owner-scoped expo creation and selection, open each expo's sale counter, and filter analytics by one expo or all expos.
 - [ ] Verify saving a sale and opening its WhatsApp bill after an owner account exists; the Cloud account list is currently empty.

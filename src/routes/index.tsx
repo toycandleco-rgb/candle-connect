@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   ArrowDownRight,
+  ArrowLeft,
   BadgeIndianRupee,
   Boxes,
   ChartNoAxesCombined,
@@ -43,7 +44,8 @@ type Customer = Tables<"candle_customers">;
 type Sale = Tables<"candle_sales">;
 type SaleItem = Tables<"candle_sale_items">;
 type Expense = Tables<"candle_sale_expenses">;
-type Section = "sale" | "overview" | "products" | "customers";
+type Expo = Tables<"candle_expos">;
+type Section = "expos" | "sale" | "overview" | "products" | "customers";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -73,7 +75,11 @@ function App() {
   const [authPassword, setAuthPassword] = useState("");
   const [authMessage, setAuthMessage] = useState("");
   const [busy, setBusy] = useState(false);
-  const [section, setSection] = useState<Section>("sale");
+  const [section, setSection] = useState<Section>("expos");
+  const [expos, setExpos] = useState<Expo[]>([]);
+  const [activeExpoId, setActiveExpoId] = useState("");
+  const [analyticsExpoId, setAnalyticsExpoId] = useState("all");
+  const [expoName, setExpoName] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [sales, setSales] = useState<Sale[]>([]);
@@ -152,34 +158,31 @@ function App() {
     [draftLines, products],
   );
   const draftTotals = calculateSale(draftCart, draftExpenses);
-  const totals = useMemo(
+  const activeExpo = expos.find((expo) => expo.id === activeExpoId) ?? null;
+  const analyticsSales = useMemo(
     () =>
-      sales.reduce(
-        (acc, sale) => {
-          const saleItems = items.filter((item) => item.sale_id === sale.id);
-          const saleExpenses = expenses.filter((item) => item.sale_id === sale.id);
-          const calculated = calculateSale(
-            saleItems.map((item) => ({
-              name: item.product_name,
-              quantity: item.quantity,
-              salePrice: Number(item.sale_price),
-              costPrice: Number(item.cost_price),
-            })),
-            saleExpenses.map((item) => ({
-              description: item.description,
-              amount: Number(item.amount),
-            })),
-          );
-          acc.revenue += calculated.revenue;
-          acc.cost += calculated.productCost;
-          acc.expenses += calculated.expenses;
-          acc.profit += calculated.profit;
-          return acc;
-        },
-        { revenue: 0, cost: 0, expenses: 0, profit: 0 },
-      ),
-    [sales, items, expenses],
+      analyticsExpoId === "all"
+        ? sales
+        : sales.filter((sale) => sale.expo_id === analyticsExpoId),
+    [sales, analyticsExpoId],
   );
+  const totals = useMemo(() => {
+    const includedIds = new Set(analyticsSales.map((sale) => sale.id));
+    const calculated = calculateSale(
+      items
+        .filter((item) => includedIds.has(item.sale_id))
+        .map((item) => ({
+          name: item.product_name,
+          quantity: item.quantity,
+          salePrice: Number(item.sale_price),
+          costPrice: Number(item.cost_price),
+        })),
+      expenses
+        .filter((expense) => includedIds.has(expense.sale_id))
+        .map((expense) => ({ description: expense.description, amount: Number(expense.amount) })),
+    );
+    return { ...calculated, saleCount: analyticsSales.length };
+  }, [analyticsSales, items, expenses]);
   const visibleCustomers = customers.filter((customer) =>
     `${customer.name} ${customer.phone}`.toLowerCase().includes(search.toLowerCase()),
   );
@@ -191,6 +194,8 @@ function App() {
   );
 
   function clearBusinessData() {
+    setExpos([]);
+    setActiveExpoId("");
     setProducts([]);
     setCustomers([]);
     setSales([]);
@@ -200,7 +205,8 @@ function App() {
 
   async function loadBusinessData() {
     setError("");
-    const [productsRes, customersRes, salesRes] = await Promise.all([
+    const [exposRes, productsRes, customersRes, salesRes] = await Promise.all([
+      supabase.from("candle_expos").select("*").order("created_at", { ascending: false }),
       supabase.from("candle_products").select("*").order("name"),
       supabase.from("candle_customers").select("*").order("name"),
       supabase
@@ -209,7 +215,7 @@ function App() {
         .eq("status", "completed")
         .order("created_at", { ascending: false }),
     ]);
-    const loadError = productsRes.error ?? customersRes.error ?? salesRes.error;
+    const loadError = exposRes.error ?? productsRes.error ?? customersRes.error ?? salesRes.error;
     if (loadError) {
       setError(loadError.message);
       return;
@@ -229,11 +235,37 @@ function App() {
       setError((itemsRes.error ?? expensesRes.error)?.message ?? "Unable to load sales.");
       return;
     }
+    const loadedExpos = exposRes.data ?? [];
+    setExpos(loadedExpos);
+    setActiveExpoId((current) =>
+      loadedExpos.some((expo) => expo.id === current) ? current : "",
+    );
     setProducts(productsRes.data ?? []);
     setCustomers(customersRes.data ?? []);
     setSales(loadedSales);
     setItems(itemsRes.data ?? []);
     setExpenses(expensesRes.data ?? []);
+  }
+
+  async function createExpo(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!session || !expoName.trim()) return;
+    setBusy(true);
+    setError("");
+    const { data, error: createError } = await supabase
+      .from("candle_expos")
+      .insert({ owner_id: session.id, name: expoName.trim() })
+      .select("*")
+      .single();
+    if (createError || !data) setError(createError?.message ?? "Unable to create the expo.");
+    else {
+      setExpos((current) => [data, ...current]);
+      setActiveExpoId(data.id);
+      setExpoName("");
+      setSection("sale");
+      setNotice(`${data.name} is ready for sales`);
+    }
+    setBusy(false);
   }
 
   async function handleAuth(event: FormEvent<HTMLFormElement>) {
@@ -405,7 +437,11 @@ function App() {
 
   async function saveSale(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!session) return;
+    if (!session || !activeExpo) {
+      setError("Choose or create an expo before recording a sale.");
+      setSection("expos");
+      return;
+    }
     const phone = normalizePhone(customerPhone);
     if (!customerName.trim()) {
       setError("Add the customer's name.");
@@ -447,6 +483,7 @@ function App() {
       .from("candle_sales")
       .insert({
         owner_id: session.id,
+        expo_id: activeExpo.id,
         customer_id: customerId,
         customer_name: customerName.trim(),
         customer_phone: `+${phone}`,
@@ -699,6 +736,7 @@ function App() {
           <nav className="side-nav" aria-label="Main navigation">
             {(
               [
+                ["expos", "My expos", Flame],
                 ["sale", "New sale", ShoppingBag],
                 ["overview", "Sales overview", ChartNoAxesCombined],
                 ["products", "Products", Boxes],
@@ -709,6 +747,11 @@ function App() {
                 type="button"
                 key={key}
                 onClick={() => {
+                  if (key === "sale" && !activeExpo) {
+                    setSection("expos");
+                    setError("Choose an expo to start a sale.");
+                    return;
+                  }
                   setSection(key);
                   setSearch("");
                   setError("");
@@ -757,22 +800,28 @@ function App() {
           )}
           {section === "sale" && (
             <>
+              {!activeExpo ? (
+                <EmptyState
+                  icon={Flame}
+                  title="Choose an expo first"
+                  text="Every sale will be saved under the expo you select."
+                  action="Choose an expo"
+                  onAction={() => setSection("expos")}
+                />
+              ) : <>
               <div className="page-heading sale-heading">
                 <div>
                   <div className="eyebrow">
-                    <span className="eyebrow-dot" /> EXPO COUNTER
+                    <span className="eyebrow-dot" /> {activeExpo.name.toUpperCase()}
                   </div>
                   <h1>
                     Make a sale<span className="heading-period">.</span>
                   </h1>
                   <p>Pick the candles, add your customer, and you’re done.</p>
                 </div>
-                <div className="heading-date">
-                  <span>YOUR PRODUCT RANGE</span>
-                  <strong>
-                    {products.filter((item) => item.active).length} <small>ACTIVE</small>
-                  </strong>
-                </div>
+                <Button variant="outline" type="button" onClick={() => setSection("expos")}>
+                  <ArrowLeft size={15} /> Change expo
+                </Button>
               </div>
               {savedBillLink && (
                 <div className="bill-ready">
@@ -1060,6 +1109,77 @@ function App() {
                   </p>
                 </aside>
               </form>
+              </>}
+            </>
+          )}
+          {section === "expos" && (
+            <>
+              <PageHeader
+                eyebrow="YOUR EVENTS"
+                title="My expos"
+                description="Create an expo, then open it to start recording sales."
+              />
+              <div className="expo-page-grid">
+                <form className="panel add-expo-panel" onSubmit={createExpo}>
+                  <div className="section-title">
+                    <span className="add-icon"><Flame size={19} /></span>
+                    <div>
+                      <h2>Create an expo</h2>
+                      <p>Give each event its own sales and profit totals.</p>
+                    </div>
+                  </div>
+                  <label>
+                    Expo name
+                    <Input
+                      value={expoName}
+                      onChange={(event) => setExpoName(event.target.value)}
+                      required
+                      maxLength={120}
+                      placeholder="e.g. Diwali Market 2026"
+                    />
+                  </label>
+                  <Button type="submit" disabled={busy}>
+                    <Plus size={16} /> {busy ? "Creating…" : "Create expo"}
+                  </Button>
+                </form>
+                <section className="panel expo-list-panel">
+                  <div className="list-heading">
+                    <div>
+                      <h2>Your expos</h2>
+                      <p>Open an event to go straight to its sale counter.</p>
+                    </div>
+                    <span className="record-count">{expos.length} EXPO{expos.length === 1 ? "" : "S"}</span>
+                  </div>
+                  {expos.length ? (
+                    <div className="expo-list">
+                      {expos.map((expo) => {
+                        const expoSales = sales.filter((sale) => sale.expo_id === expo.id);
+                        const expoRevenue = expoSales.reduce((sum, sale) =>
+                          sum + items.filter((item) => item.sale_id === sale.id)
+                            .reduce((itemSum, item) => itemSum + Number(item.sale_price) * item.quantity, 0), 0);
+                        return (
+                          <article className="expo-record" key={expo.id}>
+                            <div className="expo-record-icon"><Flame size={18} /></div>
+                            <div className="expo-record-name">
+                              <strong>{expo.name}</strong>
+                              <span>{expoSales.length} {expoSales.length === 1 ? "sale" : "sales"} · {formatINR(expoRevenue)}</span>
+                            </div>
+                            <Button type="button" onClick={() => {
+                              setActiveExpoId(expo.id);
+                              setSection("sale");
+                              setError("");
+                            }}>
+                              Open <ChevronRight size={15} />
+                            </Button>
+                          </article>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <EmptyState icon={Flame} title="No expos yet" text="Create your first expo to start billing." />
+                  )}
+                </section>
+              </div>
             </>
           )}
           {section === "overview" && (
@@ -1067,15 +1187,26 @@ function App() {
               <PageHeader
                 eyebrow="YOUR EXPO AT A GLANCE"
                 title="Sales overview"
-                description="Every sale, cost and rupee of profit—together."
+                description="Compare one event or see every expo together."
               />
+              <label className="analytics-expo-filter">
+                Show analytics for
+                <div className="select-wrap">
+                  <Flame size={16} />
+                  <select value={analyticsExpoId} onChange={(event) => setAnalyticsExpoId(event.target.value)}>
+                    <option value="all">All expos</option>
+                    {expos.map((expo) => <option key={expo.id} value={expo.id}>{expo.name}</option>)}
+                  </select>
+                  <ChevronDown size={15} />
+                </div>
+              </label>
               <div className="metric-grid">
                 <Metric
                   icon={Wallet}
                   label="Sales"
                   amount={totals.revenue}
                   tone="blue"
-                  caption={`${sales.length} completed ${sales.length === 1 ? "sale" : "sales"}`}
+                  caption={`${totals.saleCount} completed ${totals.saleCount === 1 ? "sale" : "sales"}`}
                 />
                 <Metric
                   icon={ArrowDownRight}
@@ -1106,7 +1237,7 @@ function App() {
                     <p>Product cost and prices are saved at the time of sale.</p>
                   </div>
                   <div className="list-actions">
-                    <span className="record-count">{sales.length} BILLS</span>
+                    <span className="record-count">{analyticsSales.length} BILLS</span>
                     <label className="list-search">
                       <Search size={14} />
                       <Input
@@ -1118,10 +1249,10 @@ function App() {
                     </label>
                   </div>
                 </div>
-                {sales.length ? (
+                {analyticsSales.length ? (
                   visibleSales.length ? (
                     <div className="sales-list">
-                      {visibleSales.map((sale) => (
+                      {visibleSales.filter((sale) => analyticsExpoId === "all" || sale.expo_id === analyticsExpoId).map((sale) => (
                         <SaleCard
                           key={sale.id}
                           sale={sale}
@@ -1140,10 +1271,10 @@ function App() {
                 ) : (
                   <EmptyState
                     icon={ChartNoAxesCombined}
-                    title="Your first sale is waiting"
-                    text="Record your first candle sale to see sales and profit here."
-                    action="Start a sale"
-                    onAction={() => setSection("sale")}
+                    title="No sales for this expo yet"
+                    text="Record a sale in this expo to see its totals here."
+                    action="Open an expo"
+                    onAction={() => setSection("expos")}
                   />
                 )}
               </section>
@@ -1453,6 +1584,7 @@ function App() {
       <nav className="mobile-nav" aria-label="Mobile navigation">
         {(
           [
+            ["expos", "Expos", Flame],
             ["sale", "Sale", ShoppingBag],
             ["overview", "Totals", ChartNoAxesCombined],
             ["products", "Candles", Boxes],
@@ -1463,6 +1595,10 @@ function App() {
             type="button"
             key={key}
             onClick={() => {
+              if (key === "sale" && !activeExpo) {
+                setSection("expos");
+                return;
+              }
               setSection(key);
               setSearch("");
               setError("");
