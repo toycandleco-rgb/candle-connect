@@ -7,6 +7,10 @@ export type SaleLine = {
 
 export type SaleExpense = { description: string; amount: number };
 
+export type ExpoSale = { id: string; expo_id: string | null };
+export type RecordedSaleLine = SaleLine & { saleId: string };
+export type RecordedSaleExpense = SaleExpense & { saleId: string };
+
 export function calculateSale(lines: SaleLine[], expenses: SaleExpense[]) {
   const revenue = lines.reduce((total, line) => total + line.salePrice * line.quantity, 0);
   const productCost = lines.reduce((total, line) => total + line.costPrice * line.quantity, 0);
@@ -17,6 +21,25 @@ export function calculateSale(lines: SaleLine[], expenses: SaleExpense[]) {
     expenses: roundMoney(expenseTotal),
     profit: roundMoney(revenue - productCost - expenseTotal),
   };
+}
+
+export function summarizeExpoSales(
+  sales: ExpoSale[],
+  items: RecordedSaleLine[],
+  expenses: RecordedSaleExpense[],
+  expoId: string | null = null,
+) {
+  const includedSales = expoId === null ? sales : sales.filter((sale) => sale.expo_id === expoId);
+  const saleIds = new Set(includedSales.map((sale) => sale.id));
+  const totals = calculateSale(
+    items
+      .filter((item) => saleIds.has(item.saleId))
+      .map(({ name, quantity, salePrice, costPrice }) => ({ name, quantity, salePrice, costPrice })),
+    expenses
+      .filter((expense) => saleIds.has(expense.saleId))
+      .map(({ description, amount }) => ({ description, amount })),
+  );
+  return { ...totals, saleCount: includedSales.length };
 }
 
 export function roundMoney(value: number): number {
